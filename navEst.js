@@ -6,10 +6,34 @@ async function get_travel_est(lat1, lng1, lat2, lng2) {
     console.log(url);
     request = await fetch(url);
     pageData = await request.text();
-    i = pageData.indexOf("Update Map Image");
-    i = pageData.indexOf("span", i);
+    i = pageData.indexOf("To:");
     i = pageData.indexOf(">",i) + 1;
-    console.log(i);
+    j = pageData.indexOf("<",i);
+    // console.log(pageData.slice(i, j));
+    return pageData.slice(i, j);
 }
 
-get_travel_est(37.390603,-122.116283, 37.384844, -122.110408)
+function parse_prev_number(s, index) {
+    // given index is after the number with no numbers in between
+    j = s.lastIndexOf(" ", index);
+    i = s.lastIndexOf(" ", j-1) + 1;
+    // console.log(s.slice(i, j));
+    return parseInt(s.slice(i,j).replace(" ", ""));
+}
+
+function turn_into_mins(t) {
+    mins = 0;
+    if (t.includes("min")) mins += parse_prev_number(t, t.indexOf("min"));
+    if (t.includes("hr")) mins += parse_prev_number(t, t.indexOf("hr")) * 60;
+    return mins;
+}
+
+async function get_travel_estimate_mins(lat1, lng1, lat2, lng2) {
+    unparsed_est = await get_travel_est(lat1, lng1, lat2, lng2);
+    if (unparsed_est == undefined) return Number.MAX_SAFE_INTEGER;
+    parsed_est = turn_into_mins(unparsed_est);
+    return parsed_est;
+}
+
+// get_travel_est(48.829403, -122.557852, 31.081000, -101.454712)
+get_travel_estimate_mins(37.389852, -122.114206, 37.388990, -122.066441).then((result) => console.log(result));
