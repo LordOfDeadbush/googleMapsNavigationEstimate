@@ -4,7 +4,7 @@ maps_nav_url = "https://www.google.com/search?q="
 async function get_travel_est(lat1, lng1, lat2, lng2) {
     url = maps_nav_url + lat1 + "%2C" + lng1 + "to" + lat2 + "%2C" + lng2;
     console.log(url);
-    request = await fetch(url);
+    request = await fetch(url, {method: 'POST', credentials: 'omit'});
     pageData = await request.text();
     i = pageData.indexOf("To:");
     i = pageData.indexOf(">",i) + 1;
@@ -36,19 +36,19 @@ async function get_travel_estimate_mins(lat1, lng1, lat2, lng2) {
 }
 
 async function load_est() { // params for test are: ?la1=37.389852&lo1=-122.114206&la2=37.388990&lo2=-122.066441
-    const queryString = window.location.search;
-    const params = new URLSearchParams(queryString);
-    la1 = params.get("la1");
-    lo1 = params.get("lo1");
-    la2 = params.get("la2");
-    lo2 = params.get("lo2");
-    console.log(la1, lo1, la2, lo2);
+    // const queryString = window.location.search;
+    // // const params = new URLSearchParams(queryString);
+    // la1 = params.get("la1");
+    // lo1 = params.get("lo1");
+    // la2 = params.get("la2");
+    // lo2 = params.get("lo2");
+    // console.log(la1, lo1, la2, lo2);
     s = await get_travel_estimate_mins(48.829403, -122.557852, 31.081000, -101.454712);
     document.getElementById("output").innerHTML = s;
 }
 
 // get_travel_est(48.829403, -122.557852, 31.081000, -101.454712)
-get_travel_estimate_mins(37.389852, -122.114206, 37.388990, -122.066441).then((result) => console.log(result));
+// get_travel_estimate_mins(37.389852, -122.114206, 37.388990, -122.066441).then((result) => console.log(result));
 
 // const queryString = window.location.search;
 // const params = new URLSearchParams(queryString);
